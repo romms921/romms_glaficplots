@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='romms_glaficplots',
-    version='0.0.2',    
+    version='0.0.6',    
     description='A python package to make basic plots (errors and critical curves) for glafic',
     url='https://github.com/romms921/romms_glaficplots.git',
     author='Rommulus Lewis',
@@ -13,8 +13,7 @@ setup(
     install_requires=['pandas',
                       'numpy',
                       'matplotlib',
-                      'seaborn',
-                      'warnings',                     
+                      'seaborn',                     
                       ],
 
     classifiers=[
