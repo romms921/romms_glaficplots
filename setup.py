@@ -12,9 +12,9 @@ setup(
     packages=['romms_glaficplots'],
     install_requires=['pandas',
                       'numpy',
-                      'matplotlib'
-                      'seaborn'
-                      'warnings'                     
+                      'matplotlib',
+                      'seaborn',
+                      'warnings',                     
                       ],
 
     classifiers=[
