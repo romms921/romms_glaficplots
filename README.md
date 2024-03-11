@@ -30,9 +30,10 @@ import romms_glaficplots
 filename_1 = 'obs_point.dat'
 filename_2 = 'out_point.dat'
 filename_3 = 'out_crit.dat'
+plot_name = 'SIE (POS)' # Example Lens Name
 
-obs_data, pred_data = error_plot(filename_1, filename_2)
+obs_data, pred_data = error_plot(filename_1, filename_2, plot_name)
 
-obs_data, pred_data = critcurve_plot(filename_1, filename_3)
+obs_data, pred_data = critcurve_plot(filename_1, filename_3, plot_name)
 ```
 
