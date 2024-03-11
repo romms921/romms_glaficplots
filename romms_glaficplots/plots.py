@@ -8,7 +8,7 @@ warnings.filterwarnings('ignore')
 
 # Position and Magnification Plots
 
-def error_plot(filename, filename_1):
+def error_plot(filename, filename_1, plot_name):
     # Storage for parsed data
     data = []
     
@@ -74,7 +74,7 @@ def error_plot(filename, filename_1):
     plt.figure(figsize =(8,6))
     plt.bar(data_df['Label'], sq, label=data_df['Label'], color = colours1)
     plt.axhline(xmin=0, xmax=10, y=rms, linestyle ='--', color ='k', linewidth = 2)
-    plt.title('SIE Pos Constraint')
+    plt.title(plot_name + ' Position Error')
     plt.legend(labels=['_', '_', '_', '_', '1 σ Error'])
     plt.xlabel('Image')
     plt.ylabel('Error')
@@ -101,7 +101,7 @@ def error_plot(filename, filename_1):
     plt.xlabel("Image") 
     plt.ylabel("Flux Ratio") 
     plt.legend(labels=['Observed Flux Ratio', 'Predicted Flux Ratio', '1 σ Error', '2 σ Error'])
-    plt.title('SIE Pos Constraint Flux Ratio')
+    plt.title(plot_name + ' Flux Ratio Error')
     plt.show() 
 
 
@@ -111,7 +111,7 @@ def error_plot(filename, filename_1):
 
 # Critical Curves Plot
 
-def critcurve_plot(filename_4, filename_3):
+def critcurve_plot(filename_4, filename_3, plot_name):
     data_crit = pd.read_csv(filename_3, header= None, sep="\s+")
     data_crit.__dataframe__
     df = data_crit.iloc[1:]
@@ -154,7 +154,7 @@ def critcurve_plot(filename_4, filename_3):
     for x, y, txt in zip(data_df[0]*100, data_df[1]*100, labels):
         plt.text(x, y-17, txt, fontsize=13, ha='center', va='bottom')
 
-    plt.title('SIE Position Constraint Critical Curves')
+    plt.title(plot_name + ' Critical Curves')
     plt.xlabel('x [pixel]')
     plt.ylabel('y [pixel]')
     plt.xlim(-170,170)
