@@ -25,7 +25,7 @@ Install romms_glaficplots with pip
 ## Usage/Examples
 
 ```python
-import romms_glaficplots
+from romms_glaficplots import error_plot, critcurve_plot
 
 filename_1 = 'obs_point.dat'
 filename_2 = 'out_point.dat'
