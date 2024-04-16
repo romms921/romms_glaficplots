@@ -34,6 +34,6 @@ plot_name = 'SIE (POS)' # Example Lens Name
 
 obs_data, pred_data = error_plot(filename_1, filename_2, plot_name)
 
-obs_data, pred_data = critcurve_plot(filename_1, filename_3, plot_name)
+obs_data, pred_data = critcurve_plot(filename_1, filename_2, filename_3, plot_name)
 ```
 

@@ -64,6 +64,9 @@ def error_plot(filename, filename_1, plot_name):
     sum_sq = (d_x**2) + (d_y**2)
     sq = np.sqrt(sum_sq)
     rms = np.average(sq)
+    rms_unit = rms*1000
+    rms_round = round(rms_unit, 3)
+    rms_str = str(rms_round)
 
     # Plotting Position Error Graph
     custom_params = {"axes.spines.right": False, "axes.spines.top": False}
@@ -73,9 +76,12 @@ def error_plot(filename, filename_1, plot_name):
     colours = [(0.1,0.4,1.0,0.7), (0.0,0.7,0.4,0.7), (0.7,0.3,0.4,0.7), (0.8,0.7,0.1,0.7)]
     plt.figure(figsize =(8,6))
     plt.bar(data_df['Label'], sq, label=data_df['Label'], color = colours1)
-    plt.axhline(xmin=0, xmax=10, y=rms, linestyle ='--', color ='k', linewidth = 2)
-    plt.title(plot_name + ' Position Error')
-    plt.legend(labels=['_', '_', '_', '_', '1 σ Error'])
+    plt.axhline(xmin=0.05, xmax=0.23, y=3*sq[1], linestyle ='--', color ='k', linewidth = 2)
+    plt.axhline(xmin=0.29, xmax=0.47, y=3*sq[2], linestyle ='--', color ='k', linewidth = 2)
+    plt.axhline(xmin=0.53, xmax=0.71, y=3*sq[3], linestyle ='--', color ='k', linewidth = 2)
+    plt.axhline(xmin=0.77, xmax=0.95, y=3*sq[4], linestyle ='--', color ='k', linewidth = 2)
+    plt.title('SIE Pos Constraint' + ',  ' + '$Δ^{RMS} _{Pos}$ = ' + rms_str + ' mas')
+    plt.legend(labels=['_', '_', '_', '_', '3 σ Error'])
     plt.xlabel('Image')
     plt.ylabel('Error')
     plt.show()
@@ -96,11 +102,11 @@ def error_plot(filename, filename_1, plot_name):
     plt.bar(x-0.15, data_df[2], width, color='cyan', edgecolor ='k') 
     plt.bar(x+0.15, df_pred[3], width, color='red', edgecolor='k') 
     plt.errorbar(x-0.15, data_df[2], yerr=data_df[4], fmt='o', color='black', capsize=4, label='1 σ Error')
-    plt.errorbar(x-0.15, data_df[2], yerr=2*np.array(data_df[4]), fmt='o', color='black', capsize=4, label='2 σ Error')
+    plt.errorbar(x-0.15, data_df[2], yerr=3*np.array(data_df[4]), fmt='o', color='black', capsize=4, label='3 σ Error')
     plt.xticks(x, data_df['Label']) 
     plt.xlabel("Image") 
     plt.ylabel("Flux Ratio") 
-    plt.legend(labels=['Observed Flux Ratio', 'Predicted Flux Ratio', '1 σ Error', '2 σ Error'])
+    plt.legend(labels=['Observed Flux Ratio', 'Predicted Flux Ratio', '3 σ Error'])
     plt.title(plot_name + ' Flux Ratio Error')
     plt.show() 
 
@@ -111,7 +117,7 @@ def error_plot(filename, filename_1, plot_name):
 
 # Critical Curves Plot
 
-def critcurve_plot(filename_4, filename_3, plot_name):
+def critcurve_plot(filename_4, filename_1, filename_3, plot_name):
     data_crit = pd.read_csv(filename_3, header= None, sep="\s+")
     data_crit.__dataframe__
     df = data_crit.iloc[1:]
@@ -140,6 +146,27 @@ def critcurve_plot(filename_4, filename_3, plot_name):
     # Exclude the first row
     data_df = data_df.iloc[1:]
 
+    # Read and process the predicted data
+    de = pd.read_csv(filename_1, header=None, delim_whitespace=True, comment='#')
+    de = de.iloc[1:]
+
+    # Function for swapping data 
+    def swap_rows(df, row1, row2):
+        df.iloc[row1], df.iloc[row2] =  df.iloc[row2].copy(), df.iloc[row1].copy()
+        return df
+    
+    # For loop to iterate over row range for row swapping
+    for i in range(4):
+        diff = abs(abs(de.iloc[i,0]) - abs(de[0]))
+        m = diff.idxmin()
+        n = min(diff)
+        if n < 0.01:
+            de = swap_rows(de, i, (m-1))
+        else:
+            continue
+        
+    de = de.drop(columns =[3])
+
     labels = ['A', 'B', 'C', 'D']
 
     # Plotting Critial Curves
@@ -151,6 +178,7 @@ def critcurve_plot(filename_4, filename_3, plot_name):
 
     # Plotting obs image positions and labels 
     plt.scatter(data_df[0]*100, data_df[1]*100, s=20)
+    plt.scatter(de[0]*100, de[1]*100, s = 180, marker= '+', label = 'Predicted Position')
     for x, y, txt in zip(data_df[0]*100, data_df[1]*100, labels):
         plt.text(x, y-17, txt, fontsize=13, ha='center', va='bottom')
 
@@ -161,4 +189,4 @@ def critcurve_plot(filename_4, filename_3, plot_name):
     plt.ylim(-170,170)
     plt.show()
     
-    return data_df, df
+    return data_df, df, de
