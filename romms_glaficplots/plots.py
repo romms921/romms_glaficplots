@@ -101,7 +101,6 @@ def error_plot(filename, filename_1, plot_name):
     plt.figure(figsize =(8,6))
     plt.bar(x-0.15, data_df[2], width, color='cyan', edgecolor ='k') 
     plt.bar(x+0.15, df_pred[3], width, color='red', edgecolor='k') 
-    plt.errorbar(x-0.15, data_df[2], yerr=data_df[4], fmt='o', color='black', capsize=4, label='1 σ Error')
     plt.errorbar(x-0.15, data_df[2], yerr=3*np.array(data_df[4]), fmt='o', color='black', capsize=4, label='3 σ Error')
     plt.xticks(x, data_df['Label']) 
     plt.xlabel("Image") 
@@ -171,14 +170,14 @@ def critcurve_plot(filename_4, filename_1, filename_3, plot_name):
 
     # Plotting Critial Curves
     plt.figure(figsize=(8, 8))
-    plt.scatter(df[0]*100, df[1]*100, s=2)
-    plt.scatter(df[2]*100, df[3]*100, s=2)
-    plt.scatter(df[4]*100, df[5]*100, s=2)
-    plt.scatter(df[6]*100, df[7]*100, s=2)
+    plt.scatter(df[0]*100, df[1]*100, s=4)
+    plt.scatter(df[2]*100, df[3]*100, s=4)
+    plt.scatter(df[4]*100, df[5]*100, s=4)
+    plt.scatter(df[6]*100, df[7]*100, s=4)
 
     # Plotting obs image positions and labels 
-    plt.scatter(data_df[0]*100, data_df[1]*100, s=20)
-    plt.scatter(de[0]*100, de[1]*100, s = 180, marker= '+', label = 'Predicted Position')
+    plt.scatter(data_df[0]*100, data_df[1]*100, s=15, color = 'blue', label = 'Observed Position')
+    plt.scatter(de[0]*100, de[1]*100, s = 180, marker= '+', label = 'Predicted Position', color = 'orange')
     for x, y, txt in zip(data_df[0]*100, data_df[1]*100, labels):
         plt.text(x, y-17, txt, fontsize=13, ha='center', va='bottom')
 
@@ -189,4 +188,4 @@ def critcurve_plot(filename_4, filename_1, filename_3, plot_name):
     plt.ylim(-170,170)
     plt.show()
     
-    return data_df, df, de
+    return data_df, df
