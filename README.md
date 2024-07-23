@@ -48,15 +48,7 @@ This package can be used to generate only plots or the parameter table or both. 
 
 ## Flux File Format Example
 This file specifies the observed flux ratios. (Values specified according to Neirenberg)
-The file should have the following content:
-
-flux flux_error 
-1.00 0.01
-1.16 0.02
-0.92 0.02
-0.46 0.01
-
-Save the file in format .dat 
+example_flux.dat has an example of the format for the flux file. 
 
 ## Acknowledgements 
 Special thanks to Shashpal Singh for the format and styling of the plots.
