@@ -5,10 +5,143 @@ from astropy.io import fits
 import warnings
 warnings.filterwarnings('ignore')
 
+# Glafic Tabular 
+
+# Read_script.py
+# Open the Python file as a text file
+def glafic_tabular(filename_0, save_table_flag = False):
+    with open(filename_0, 'r') as file:
+        # Read the contents of the file
+        content = file.read()
+
+    # Define a function to find a line in the file
+    def find_line(word, content):
+        content = content.split('\n')
+        line_number = 0
+        for line in content:
+            line_number += 1
+            if word in line:
+                return line_number
+        return "Line Not Found"
+
+    # Set lens line number
+    line_set = find_line('glafic.set_lens', content)
+    line_opt = find_line('glafic.setopt_lens', content)
+
+    if line_set == "Line Not Found" or line_opt == "Line Not Found":
+        raise ValueError("Failed to find lens or setopt lens lines in the glafic file.")
+
+    # Split the content by new line
+    content_list = content.split('\n')
+
+    # Get the set_lens line
+    set_lens = content_list[line_set-1]
+
+    # Get the setopt_lens line
+    setopt_lens = content_list[line_opt-1]
+
+    # Define the list of possible models
+    models = ['SIE', 'POW', 'NFW']
+
+    parts_set_lens = set_lens.split(',')
+    parts_set_lens = [part.strip().strip("'") for part in parts_set_lens]
+
+    parts_setopt_lens = setopt_lens.split(',')
+    parts_setopt_lens = [part.strip().strip("'") for part in parts_setopt_lens]
+
+    for i in models:
+        i = i.lower()
+        if i in set_lens:
+            if i == models[1].lower(): # POW model
+                name = models[1]
+                x = parts_set_lens[4]
+                y = parts_set_lens[5]
+                e = parts_set_lens[6]
+                pa = parts_set_lens[7]
+                r_ein = parts_set_lens[8]
+                pwi = parts_set_lens[9].replace(')', '') 
+
+                x_flag = parts_setopt_lens[3]
+                y_flag = parts_setopt_lens[4]
+                e_flag = parts_setopt_lens[5]
+                pa_flag = parts_setopt_lens[6]
+                r_ein_flag = parts_setopt_lens[7]
+                pwi_flag = parts_setopt_lens[8].replace(')', '') 
+
+                row_0 = [name, 'x', 'y', 'e', 'θ', 'r_ein', 'γ (PWI)']
+                row_1 = ['Value', x, y, e, pa, r_ein, pwi]
+                row_2 = ['Fixed', x_flag, y_flag, e_flag, pa_flag, r_ein_flag, pwi_flag]
+
+                table = pd.DataFrame([row_1, row_2], columns = row_0)
+
+            elif i == models[0].lower(): # SIE model
+                name = models[0]
+                sigma = parts_set_lens[3]
+                x = parts_set_lens[4]
+                y = parts_set_lens[5]
+                e = parts_set_lens[6]
+                pa = parts_set_lens[7]
+                r_core = parts_set_lens[8]
+                pwi = parts_set_lens[9].replace(')', '') 
+
+                sigma_flag = parts_setopt_lens[2]
+                x_flag = parts_setopt_lens[3]
+                y_flag = parts_setopt_lens[4]
+                e_flag = parts_setopt_lens[5]
+                pa_flag = parts_setopt_lens[6]
+                r_core_flag = parts_setopt_lens[7]
+                pwi_flag = parts_setopt_lens[8].replace(')', '') 
+
+                row_0 = [name, 'σ', 'x', 'y', 'e', 'θ', 'r_core', 'γ (PWI)']
+                row_1 = ['Value', sigma, x, y, e, pa, r_core, pwi]
+                row_2 = ['Fixed', sigma_flag, x_flag, y_flag, e_flag, pa_flag, r_core_flag, pwi_flag]
+
+                table = pd.DataFrame([row_1, row_2], columns = row_0)
+
+            elif i == models[2].lower(): # NFW model    
+                name = models[2]
+                m = parts_set_lens[3]
+                x = parts_set_lens[4]
+                y = parts_set_lens[5]
+                e = parts_set_lens[6]
+                pa = parts_set_lens[7]
+                c = parts_set_lens[8].replace(')', '') 
+
+                m_flag = parts_setopt_lens[2]
+                x_flag = parts_setopt_lens[3]
+                y_flag = parts_setopt_lens[4]
+                e_flag = parts_setopt_lens[5]
+                pa_flag = parts_setopt_lens[6]
+                c_flag = parts_setopt_lens[7].replace(')', '') 
+
+                row_0 = [name, 'M_tot', 'x', 'y', 'e', 'θ_e', 'c']
+                row_1 = ['Value', m, x, y, e, pa, c]
+                row_2 = ['Fixed', m_flag, x_flag, y_flag, e_flag, pa_flag, c_flag]
+
+                table = pd.DataFrame([row_1, row_2], columns = row_0)
+
+            if save_table_flag:
+                table.to_csv('table.csv')
+            
+            return table  
+    
+    print("Model not found")
+    return None  # Explicitly return None if no model is found
+            
 
 # Position and Magnification Plots
 
-def error_plot(filename_1, filename_2, filename_4, filename_5, plot_name, num_images):
+def error_plot(filename_1, filename_2, filename_4, filename_5, plot_name, num_images, table_flag = False, glafic_file=None):
+    if table_flag:
+        if glafic_file is None:
+            print("Please provide the filename for the glafic script")
+            raise ValueError("Glafic File not provided")
+
+    if table_flag:    
+        table = glafic_tabular(glafic_file)
+        if table is None:
+            raise ValueError("Failed to create the table from the glafic file.")
+
     # Storage for parsed data
     data = []
     
@@ -77,6 +210,8 @@ def error_plot(filename_1, filename_2, filename_4, filename_5, plot_name, num_im
             b = df_2.index.get_loc(df_2[df_2[2] == min_vales].index[0])
             df_3 = df_pred.drop((b+1), axis='index')
             df_pred = df_3
+            df_pred.reset_index(drop=True, inplace=True)
+        df_pred.index = df_pred.index + 1
 
     # Calculations for Position Error values
     d_x = data_df[0]-df_pred[0]
@@ -199,7 +334,11 @@ def error_plot(filename_1, filename_2, filename_4, filename_5, plot_name, num_im
     plt.ylim(0, height)
     plt.legend(loc = 'upper right', fontsize='small')
     plt.title('Flux Ratio Error')
-
+    plt.suptitle('Lens: ' + plot_name + ' Constrained')
+    if table_flag:
+        table_plot = plt.table(cellText=table.values, colLabels=table.columns, cellLoc = 'center', loc='bottom', bbox=[-1.0, -0.5, 3.0, 0.3])
+        table_plot.auto_set_font_size(False)
+        table_plot.set_fontsize(10)
 
     return data_df, df_pred
 
@@ -266,6 +405,8 @@ def critcurve_plot(filename_1, filename_2, filename_3, plot_name, num_images):
             b = df_4.index.get_loc(df_4[df_4[2] == min_vales].index[0])
             df_5 = de.drop((b+1), axis='index')
             de = df_5
+            de.reset_index(drop=True, inplace=True)
+        de.index = de.index + 1
 
     labels = ['A', 'B', 'C', 'D']
 
