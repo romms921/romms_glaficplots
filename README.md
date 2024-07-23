@@ -25,14 +25,17 @@ Install romms_glaficplots with pip
 ## Usage/Examples
 
 ```python
-from romms_glaficplots import error_plot, critcurve_plot
+import romms_glaficplots
 
-filename_1 = 'obs_point.dat'
-filename_2 = 'out_point.dat'
-filename_3 = 'out_crit.dat'
-plot_name = 'SIE (POS)' # Example Lens Name
+filename_1 = 'obs_point_SIE(POS).dat'
+filename_2 = 'SIE_test_point.dat'
+filename_3 = 'SIE_test_crit.dat'
+filename_4 = 'flux.dat'
+filename_5 = 'SIE_test_lens.fits'
+plot_name = 'SIE (POS)'
+num_images = 4
 
-obs_data, pred_data = error_plot(filename_1, filename_2, plot_name)
+obs_data, pred_data = error_plot(filename_1, filename_2, filename_4, filename_5, plot_name, num_images)
 
-obs_data, pred_data = critcurve_plot(filename_1, filename_3, plot_name)
+obs_data, pred_data = critcurve_plot(filename_1, filename_2, filename_3, plot_name, num_images)
 ```
