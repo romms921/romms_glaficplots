@@ -47,7 +47,8 @@ This package can be used to generate only plots or the parameter table or both. 
 ```glafic_tabular(filename0, save_table_flag = True)```
 
 ## Flux File Format Example
-This file specifies the observed flux ratios. (Values specified according to Neirenberg)
+This file specifies the observed flux ratios. (Values specified according to Neirenberg).
+
 example_flux.dat has an example of the format for the flux file. 
 
 ## Acknowledgements 
