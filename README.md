@@ -1,12 +1,13 @@
 
 # Glafic Graph Plotter
 
-This is a simple python package that automates making the basic position/flux error and ciritcal curve plots. 
+This is a simple Python package that automates making the basic position/flux error and critical curve plots. 
 
 
 ## Authors
 
 - [@rommuluslewis](https://github.com/romms921)
+- [@shashpalsingh](https://github.com/Shashpal)
 
 
 ## License
@@ -42,7 +43,7 @@ obs_data, pred_data = critcurve_plot(filename_1, filename_2, filename_3, plot_na
 ```
 
 ## Package Function Use
-This package can be used to generate only plots or the parameter table or both. Use the table_flag function to generate the table along with the plot and specific the glafic_file (only works for glafic running in python). If you only require the plots you do not need to specific table_flag or galfic_file and can ignore both. If you require only the table use the glafic_tabular function for the same. If you would like to save the table as a csv use the save_table_flag.
+This package can be used to generate only plots or the parameter table or both. Use the table_flag function to generate the table along with the plot and specify the glafic_file (only works for glafic running in python). If you only require the plots you do not need to specify table_flag or galfic_file and can ignore both. If you require only the table use the glafic_tabular function for the same. If you would like to save the table as a csv use the save_table_flag.
 
 ```glafic_tabular(filename0, save_table_flag = True)```
 
